@@ -31,7 +31,7 @@ function() {
 },
 function() {
     console.log("Какая то логика ульты")
-}, 120)
+}, 145)
 
 
 const brawerModels = document.querySelectorAll('img')
