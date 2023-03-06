@@ -5,9 +5,13 @@ html {
 body {
     height: 90%;
     font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .container {
+    width: 100%;
     max-width: 1200px;
     margin: auto;
     display: flex;
@@ -20,7 +24,33 @@ img {
     max-width: 270px;
 }
 
-.congratulation {
-    text-align: center;
+.restart {
+    padding: 10px 20px;
+    font-size: 20px;
+}
+
+.brawler {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.precentage {
+    margin: 0 0 50px 0;
+}
+
+.fill {
+    width: 200px;
+    height: 10px;
+    border: 2px solid black;
+    position: relative;
+    overflow: hidden;
+}
+
+.filled-field {
     width: 100%;
+    height: 100%;
+    position: absolute;
+    left: -200px;
+    background-color: blue;
 }
