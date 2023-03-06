@@ -1,21 +1,23 @@
 class Brawler {
 
-    constructor(model, name, hp, damage, attack, SUPER, damageFromSuper, brawlerIndex) {
+    constructor(model, name, maxHp, maxDamage, attack, SUPER, damageFromSuper, brawlerIndex) {
         this._model = model
         this._name = name
-        this._hp = hp
-        this._damage = damage
+        this._maxHp = maxHp
+        this._hp = maxHp
+        this._maxDamage = maxDamage
+        this._damage = maxDamage
         this._attack = attack
         this._SUPER = SUPER
         this._damageFromSuper = damageFromSuper
         this._brawlerIndex = brawlerIndex
         this.alive = true
-        this._xp = 0
+        this._xp = 1
         this._level = 1
-        this._fillPrecentage = this._xp / 10
-        this.restart = function () {
-            this._hp = hp
-            this.alive = true
+        this._necessaryXp = 1000
+        this.setHpAndDamage = function () {
+            this._maxHp = maxHp + this._level * 20
+            this._maxDamage = maxDamage + this._level * 7.5
         }
     }
 
@@ -24,23 +26,29 @@ class Brawler {
     }
 
 
-
-    setHpAndDamage = () => {
-        this._hp += this._level * 20
-        this._damage += this._level * 7.5
+    restart = () => {
+        this._hp = this._maxHp
+        this._damage = this._maxDamage
+        this.alive = true
     }
 
     levelUp = () => {
         this._level += 1
-        this._xp = 0
+        this._necessaryXp += 500
+        this._xp -= 1000
         this.setHpAndDamage()
     }
 
     killedSombody = () => {
-        this._xp += 300
-        if (this._xp >= 1000) {
+        this._xp += 400
+        if (this._xp >= this._necessaryXp) {
             this.levelUp()
         }
+    }
+
+    finish = () => {
+        this._damage = 0
+        this._damageFromSuper = 0
     }
 
     isDead = () => {
@@ -84,6 +92,12 @@ const kolt = new Brawler (
 
 
 const brawerModels = document.querySelectorAll('img')
+const attackButtons = document.querySelectorAll('.attack')
+const congratulation = document.querySelector('.congratulation')
+const restartButton = document.querySelector('.restart')
+const hp = document.querySelectorAll('.hp')
+const filledXpField = document.querySelectorAll('.filled-field')
+const displayLevel = document.querySelectorAll('.level')
 
 function setModels() {
     brawerModels.forEach(model => {
@@ -101,22 +115,23 @@ function setModels() {
     })
 }
 
-setModels()
+function setLevels() {
+    displayLevel[shelly._brawlerIndex].textContent = `Уровень: ${shelly._level}`
+    displayLevel[kolt._brawlerIndex].textContent = `Уровень: ${kolt._level}`
+}
 
-const attackButtons = document.querySelectorAll('.attack')
-const congratulation = document.querySelector('.congratulation')
-const restartButton = document.querySelector('.restart')
-const hp = document.querySelectorAll('.hp')
-const fillField = document.querySelectorAll('.filled-field')
+function setButtons() {
+    attackButtons[shelly._brawlerIndex].style.display = 'block'
+    attackButtons[kolt._brawlerIndex].style.display = 'block'
+}
 
-
-
-function fillPrecentage() {
-    const shellyXpField = fillField[0].clientWidth - (shelly._xp / 5)
-    const koltXpField = fillField[0].clientWidth - (kolt._xp / 5)
-    console.log(kolt._xp, shelly._xp, shellyXpField, koltXpField)
-    fillField[shelly._brawlerIndex].style.left = `-${shellyXpField}px`
-    fillField[kolt._brawlerIndex].style.left = `-${koltXpField}px`
+function fillXpBar() {
+    const shellyXpInPrecents = shelly._xp / shelly._necessaryXp * 100
+    const koltXpInPrecents = kolt._xp / kolt._necessaryXp * 100
+    const pixelsQuantityForFillShellyXpBar = filledXpField[shelly._brawlerIndex].clientWidth / 100 * shellyXpInPrecents
+    const pixelsQuantityForFillKoltXpBar = filledXpField[kolt._brawlerIndex].clientWidth / 100 * koltXpInPrecents
+    filledXpField[shelly._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillShellyXpBar}px`
+    filledXpField[kolt._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillKoltXpBar}px`
 }
 
 
@@ -124,14 +139,15 @@ function somebodyDead() {
     setModels()
     if (shelly.alive === false) {
         congratulation.textContent = 'Кольт победил!'
-        attackButtons[shelly._brawlerIndex].style.display = 'none'
         hp[shelly._brawlerIndex].textContent = 'Умер'
     } else if (kolt.alive === false) {
         congratulation.textContent = 'Шелли победила!'
         hp[kolt._brawlerIndex].textContent = 'Умер'
-        attackButtons[kolt._brawlerIndex].style.display = 'none'
     }
-    fillPrecentage()
+    attackButtons[shelly._brawlerIndex].style.display = 'none'
+    attackButtons[kolt._brawlerIndex].style.display = 'none'
+    fillXpBar()
+    setLevels()
 }
 
 
@@ -140,10 +156,12 @@ function checkHp() {
         shelly.isDead()
         kolt.killedSombody()
         somebodyDead()
+        kolt.finish()
     } else if (kolt._hp <= 0) {
         kolt.isDead()
         shelly.killedSombody()
         somebodyDead()
+        shelly.finish()
     }
 }
 
@@ -159,24 +177,27 @@ function setHp() {
     })
 }
 
-
-
-restartButton.addEventListener('click', function() {
+function restartGame() {
     congratulation.textContent = ''
     shelly.restart()
     kolt.restart()
     setHp()
     setModels()
-})
+    setButtons()
+}
 
 
+
+
+restartButton.addEventListener('click', restartGame)
+
+setModels()
 setHp()
-
+setLevels()
 
 attackButtons.forEach(attackButton => {
     attackButton.addEventListener('click', function() {
 
-        console.log(kolt._brawlerIndex)
         // attack brawler
         if (attackButton.classList.contains('kolt-attack')) {
             shelly.lostHp(kolt._damage)
