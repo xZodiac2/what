@@ -25,7 +25,6 @@ class Brawler {
         this._hp -= takenDamage
     }
 
-
     restart = () => {
         this._hp = this._maxHp
         this._damage = this._maxDamage
@@ -138,10 +137,6 @@ function fillXpBar() {
     const koltXpInPrecents = kolt._xp / kolt._necessaryXp * 100
     const pixelsQuantityForFillShellyXpBar = filledXpField[shelly._brawlerIndex].clientWidth / 100 * shellyXpInPrecents
     const pixelsQuantityForFillKoltXpBar = filledXpField[kolt._brawlerIndex].clientWidth / 100 * koltXpInPrecents
-    console.log(shellyXpInPrecents)
-    console.log(koltXpInPrecents)
-    console.log(pixelsQuantityForFillShellyXpBar)
-    console.log(pixelsQuantityForFillKoltXpBar)
     filledXpField[shelly._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillShellyXpBar}px`
     filledXpField[kolt._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillKoltXpBar}px`
 }
