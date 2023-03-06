@@ -35,7 +35,7 @@ class Brawler {
     levelUp = () => {
         this._level += 1
         this._necessaryXp += 500
-        this._xp -= 1000
+        this._xp -= this._necessaryXp
         this.setHpAndDamage()
     }
 
