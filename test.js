@@ -98,6 +98,8 @@ const restartButton = document.querySelector('.restart')
 const hp = document.querySelectorAll('.hp')
 const filledXpField = document.querySelectorAll('.filled-field')
 const displayLevel = document.querySelectorAll('.level')
+const displayLevelBlock = document.querySelectorAll('.precentage')
+const deadLabel = document.querySelectorAll('.dead-label')
 
 function setModels() {
     brawerModels.forEach(model => {
@@ -112,6 +114,12 @@ function setModels() {
         } else if (model.classList.contains('kolt-model') && kolt.alive === false) {
             model.setAttribute('src', '')
         }
+    })
+}
+
+function setLevelBlocks() {
+    displayLevelBlock.forEach(block => {
+        block.style.display = 'block'
     })
 }
 
@@ -130,6 +138,10 @@ function fillXpBar() {
     const koltXpInPrecents = kolt._xp / kolt._necessaryXp * 100
     const pixelsQuantityForFillShellyXpBar = filledXpField[shelly._brawlerIndex].clientWidth / 100 * shellyXpInPrecents
     const pixelsQuantityForFillKoltXpBar = filledXpField[kolt._brawlerIndex].clientWidth / 100 * koltXpInPrecents
+    console.log(shellyXpInPrecents)
+    console.log(koltXpInPrecents)
+    console.log(pixelsQuantityForFillShellyXpBar)
+    console.log(pixelsQuantityForFillKoltXpBar)
     filledXpField[shelly._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillShellyXpBar}px`
     filledXpField[kolt._brawlerIndex].style.left = `-${200 - pixelsQuantityForFillKoltXpBar}px`
 }
@@ -139,11 +151,15 @@ function somebodyDead() {
     setModels()
     if (shelly.alive === false) {
         congratulation.textContent = 'Кольт победил!'
-        hp[shelly._brawlerIndex].textContent = 'Умер'
+        deadLabel[shelly._brawlerIndex].style.display = 'block'
     } else if (kolt.alive === false) {
         congratulation.textContent = 'Шелли победила!'
-        hp[kolt._brawlerIndex].textContent = 'Умер'
+        deadLabel[kolt._brawlerIndex].style.display = 'block'
     }
+
+
+    hp[shelly._brawlerIndex].style.display = 'none'
+    hp[kolt._brawlerIndex].style.display = 'none'
     attackButtons[shelly._brawlerIndex].style.display = 'none'
     attackButtons[kolt._brawlerIndex].style.display = 'none'
     fillXpBar()
@@ -179,11 +195,16 @@ function setHp() {
 
 function restartGame() {
     congratulation.textContent = ''
+    hp[shelly._brawlerIndex].style.display = 'block'
+    hp[kolt._brawlerIndex].style.display = 'block'
+    deadLabel[shelly._brawlerIndex].style.display = 'none'
+    deadLabel[kolt._brawlerIndex].style.display = 'none'
     shelly.restart()
     kolt.restart()
     setHp()
     setModels()
     setButtons()
+    setLevelBlocks()
 }
 
 
